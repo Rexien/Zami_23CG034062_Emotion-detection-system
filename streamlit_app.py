@@ -10,13 +10,24 @@ class_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral
 
 st.title("😊 Emotion Detection Web App")
 
-# Upload image
+st.subheader("Upload an image or use your webcam")
+
+# Option 1: Upload image
 uploaded_file = st.file_uploader("Upload an image...", type=["jpg", "jpeg", "png"])
 
+# Option 2: Webcam input
+webcam_image = st.camera_input("Or take a photo using your webcam")
+
+# Determine which input to use
 if uploaded_file is not None:
-    # Open image and convert to RGB
     image = Image.open(uploaded_file).convert('RGB')
-    st.image(image, caption='Uploaded Image', use_column_width=True)
+elif webcam_image is not None:
+    image = Image.open(webcam_image).convert('RGB')
+else:
+    image = None
+
+if image is not None:
+    st.image(image, caption='Input Image', use_column_width=True)
 
     # Convert to numpy array
     img_array = np.array(image)
@@ -27,7 +38,7 @@ if uploaded_file is not None:
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5)
 
     if len(faces) == 0:
-        st.warning("No face detected! Try a different image.")
+        st.warning("No face detected! Try a different image or adjust your webcam.")
     else:
         # Take the first detected face
         x, y, w, h = faces[0]
